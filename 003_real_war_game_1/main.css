@@ -1,0 +1,80 @@
+html{
+	min-height: 100%;
+	overflow: hidden;
+	position:relative;
+	z-index: 1;
+}
+
+body{
+	background-color:#f4f3ef;
+	height: 1000px;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+}
+
+body > #wrapper{
+	height: auto;
+	overflow: auto;
+	position: fixed;
+	z-index: 1;
+	width: 100%;
+	height:100%;
+	min-height:100%;
+}
+
+canvas{
+	z-index: 1;
+	position: fixed;
+}
+
+#c1{
+	position: absolute;
+	top:0px;
+}
+#line{
+	width: 300px;
+	height: 20px;
+	position:absolute;
+	top:50%;
+	margin-top: -10px;
+	left:50%;
+	margin-left: -150px;
+	font-size: small;
+	color:#888888;
+	z-index: 0;
+}
+#logo{
+	position:absolute;
+	top: 50%;
+	margin-top: -30px;
+	left: 50%;
+	margin-left: 50px;
+}
+#list{
+	width: 150px;
+	height: 300px;
+	position:absolute;
+	top: 50%;
+	margin-top: 30px;
+	left: 50%;
+	margin-left: 70px;
+	-webkit-transition-property: all;
+	-webkit-transition-duration: 500ms;
+	-webkit-transition-timing-function: ease-out;
+	z-index: 3;
+//	visibility: hidden;
+}
+.aList{
+	font-size: small;
+	color:#888888;
+	-webkit-transition-property: all;
+	-webkit-transition-duration: 500ms;
+	-webkit-transition-timing-function: ease-out;
+}
+.aList:hover{
+	color:rgba(0,0,0,0);
+	text-shadow:0px 0px 5px #000000;
+}

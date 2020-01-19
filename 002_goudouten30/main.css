@@ -1,0 +1,151 @@
+html{
+	height:100%;
+	width:100%;
+	overflow: auto;
+	position:absolute;
+	z-index: 1;
+}
+a:link{color:#888888}
+a:visited{color:#88bb88}
+h1,h2{
+margin: 0;padding: 0;
+}
+h1{
+	position:absolute;
+	right:-80px;
+	font-size:80px;
+	font-family:"Times";
+	-webkit-writing-mode:vertical-rl;
+}
+body{
+	background-color:#ffffff;
+	height:100%;
+	width:100%;
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+	position: absolute;
+	z-index: 1;
+
+	font-family: "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro   W3";
+	font-size: 12px;
+	line-height:1.6em;
+
+    -moz-transition-property:width,height;
+	-webkit-transition-property:width,height;
+	-o-transition-property:width,height;
+	-ms-transition-property:width,height;
+
+	-moz-transition-duration:700ms;
+	-webkit-transition-duration:700ms;
+	-o-transition-duration:700ms;
+	-ms-transition-duration:700ms;
+}
+
+#line{position:fixed;top:90px;left:40px;width:160px;font-size:0.8em;line-height:1.2em;color:#888888;z-index:1;}
+#line2{position:absolute;top:330px;left:40px;width:160px;font-size:3em;line-height:1.2em;color:#000000;z-index:1;}
+#number{position:absolute;font-family:"Times";font-size:100px;height:500px;color:rgba(0,0,0,0.1);left:220px;top:200px;z-index:1;-webkit-writing-mode:vertical-rl;-webkit-text-orientation: upright;}
+#address{position:absolute;font-family:"Times";font-size:40px;height:1000px;color:rgba(0,0,0,0.1);right:20px;top:35px;z-index:1;-webkit-writing-mode:vertical-rl;-webkit-text-orientation: upright;}
+#date{position:absolute;font-family:"Times";font-size:50px;height:700px;color:rgba(0,0,0,0.1);left:120px;top:460px;z-index:1;-webkit-writing-mode:vertical-rl;-webkit-text-orientation: upright;}
+#time{position:absolute;font-family:"Times";font-size:30px;height:500px;color:rgba(0,0,0,0.1);left:30px;top:580px;z-index:1;-webkit-writing-mode:vertical-rl;-webkit-text-orientation: upright;}
+
+#list{
+	position:fixed;
+	width: 120px;
+	height: 135px;
+	padding: 15px;
+	overflow: hidden;
+	top: 0px;
+	margin-top: 133px;
+	left: 0px;
+	margin-left: 27px;
+
+	color:#333333;
+
+	border: 1px solid #000000;
+	background-color: rgba(255,255,255,0.95);
+
+	-moz-transition-property:background-color;
+	-webkit-transition-property:background-color;
+	-o-transition-property:background-color;
+	-ms-transition-property:background-color;
+
+	-moz-transition-duration:500ms;
+	-webkit-transition-duration:500ms;
+	-o-transition-duration:500ms;
+	-ms-transition-duration:500ms;
+
+	z-index: 4;
+}
+#list:hover{
+	background-color: rgb(255,255,255);
+}
+.aList{
+	color:#aaaaaa;
+	text-decoration:none !important;
+
+	-moz-transition-property:color,text-shadow;
+	-webkit-transition-property:color,text-shadow;
+	-o-transition-property:color,text-shadow;
+	-ms-transition-property:color,text-shadow;
+
+	-moz-transition-duration:500ms;
+	-webkit-transition-duration:500ms;
+	-o-transition-duration:500ms;
+	-ms-transition-duration:500ms;
+}
+.aList:hover{
+	color:rgba(0,0,0,1);
+	text-shadow:0px 0px 5px #000000;
+}
+
+#login{
+	position: fixed;
+	top:0px;
+	width: 100%;
+	height: 23px;
+	padding: 5px 0px;
+	left: 0px;
+	color:#ffffff;
+	background-color: rgba(0,0,0,0.9);
+	z-index:3;
+	overflow: hidden;
+}
+
+#wrapper{
+	width:600px;
+	padding: 10px;
+	position: absolute;
+	left:306px;
+	z-index:2;
+	background-image: url("PIC/haikei.png");
+}
+.contents{
+	position: relative;
+	width:500px;
+	padding: 20px 10px;
+	left:50%;
+	margin-left:-260px;
+	margin-top: 20px;
+	margin-bottom: 30px;
+	background-color: #ffffff;
+}
+.topic{
+	border-left: 4px solid #000000;
+	padding-left: 3px;
+}
+img{
+	float:right;
+	padding: 0px 0px 20px 20px;
+}
+.clearRight{
+	clear:right;
+}
+#logo{
+	position: fixed;
+	overflow: hidden;
+	width: 150px;height: 60px;
+	top:35px;left:5px;
+
+	z-index: 2;
+}

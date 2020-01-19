@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html lang="ja-JP">
+<head>
+	<meta charset="UTF-8">
+	<title>リアル戦争ごっこ</title>
+</head>
+<style type="text/css">
+body{
+	background-color:#000000;
+}
+#canvas1{
+	position: relative;
+	left:50%;
+	margin-left: -320px;
+	border: 1px solid #999;
+}
+#canvas2{
+	visibility:hidden;
+}
+#comment{
+	position: relative;
+	width:600px;
+	padding:20px;
+	left:50%;
+	margin-left:-320px;
+	margin-top: 20px;
+	background-color:#ffffff;
+	background-image: url("title.png");
+}
+</style>
+<body onload="init()">
+	<canvas id="canvas1" width="640" height="480"></canvas>
+	<div id="comment">
+		<h2>説明</h2>
+		なんかこういう感じのタイトル画面を作ってみたかった。
+	</div>
+
+<script type="text/javascript">
+
+var canvas1 = document.getElementById("canvas1");
+var ctx = canvas1.getContext('2d');
+
+var title = new Image();
+title.src = "title.png?" + new Date().getTime();
+var startButton = new Image();
+startButton.src = "Start.png?" + new Date().getTime();
+var title2 = new Image();
+title2.src = "test.png?" + new Date().getTime();
+
+function init(){
+	setInterval(function(){
+		ctx.drawImage(title, 0, 0);
+		var t = Math.round(Math.random() * 2);
+		ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+		ctx.drawImage(startButton, 0, t*70, 200, 70, 220+Math.round(Math.random() * 3), 300+Math.round(Math.random() * 3), 200, 70);
+	
+		ctx.beginPath();
+		ctx.lineWidth = t;
+		ctx.strokeStyle = 'rgb(0,0,0)';
+		ctx.shadowColor = 'rgb(150, 0, 0)';
+		ctx.shadowBlur = 3+t;
+		ctx.moveTo(Math.round(Math.random() * 640), 0);
+		ctx.lineTo(Math.round(Math.random() * 640), 480);
+		ctx.moveTo(0, Math.round(Math.random() * 480));
+		ctx.lineTo(640, Math.round(Math.random() * 480));
+		ctx.stroke();
+		ctx.globalAlpha =Math.random()/5;
+		ctx.drawImage(title2, 0, 0);
+		ctx.globalAlpha = 1.0;
+	}, 1000/30);
+}
+
+function jump(a,b,c,d,e){
+	
+}
+</script>
+</body>
+</html>

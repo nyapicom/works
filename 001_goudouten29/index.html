@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8" http-equiv="Content-Type" content="text/html">
+	<meta name='keywords' content='第".29."回私立中高美術部合同展覧会,美術,合同展,美術サークル,部活,中学,高校,29,桜蔭,海城,開成,晃華学園,城北,女子学院,白百合学院,巣鴨学園,世田谷学園,帝京大学中学高等学校'>
+	<meta name='description' content='第".29."回私立中高美術部合同展覧会のオフィシャルサイトです。'>
+	<title>第29回私立中高美術部合同展覧会</title>
+	<link rel="icon" type="image/png" href="favicon.ico">
+	<link rel="stylesheet" type="text/css" media="screen,print" href="main.css">
+</head>
+<body onload="init()">
+	<div id="line">第29回私立中高美術部合同展覧会</div>
+		<div id='date'>??/?? ~ ??/??</div><div id='time'>??:??~??:??（最終日は??:??迄）</div><div id='number'>第29回</div><div id='address'>開催場所：？？県？？市</div>
+	<div id="aboutUs">
+		<h1>はじめに</h1>
+		このサイトを御覧頂き誠にありがとうございます。<br>
+		合同展とは、『私立中高美術部合同展覧会』の略称です。<br>
+		我々合同展は、中学、高校生だけで主体的に行う美術展覧会です。<br>
+		<br>
+		<h1>美術サークルとしての合同展</h1>
+		展覧会は年に１回です。
+		その他に展覧会の方針を決定する為の代表会議があり、ほぼ毎月行われます。
+		資金提供以外、大人たちの手を一切借りずに学生だけで運営しているため、月一回行われる代表会議は、かなりフリーダムな雰囲気です。<br><br>
+		<h1>開催日時・場所</h1>
+			??/?? ~ ??/??<br>??:??~??:??（最終日は??:??迄）<br><span style='color:#bbffff'onclick='toAccess();toAboutUs(1);'>hogehoge（hugahuga）</span><br>
+		<div style="position:absolute;right:3px;bottom:15px;color:#ffffff;font-size:3em;"onclick="toAboutUs(1);listMode();delay=10;">BACK</div>
+	</div>
+
+	<div id="participants" onMouseOver="delay=1/0;">
+		<div id="p1" class="participants"></div>
+		<div style="position:absolute;right:0px;bottom:10px;color:#ffffff;font-size:3em;" onclick="toParticipants(1);listMode();delay=10;">BACK</div>
+	</div>
+
+	<div id="access">
+		<h1>会場の地図</h1>
+		<div style="position:absolute;right:3px;bottom:15px;color:#ffffff;font-size:3em;"onclick="toAccess(1);listMode();delay=10;">BACK</div>
+	</div>
+	
+	<div id="links">
+		<h2>合同展公式サイト</h2>
+		第28回合同展公式サイト
+		<a href="http://goudouten2013.hannnari.com/">http://goudouten2013.hannnari.com/</a><br>
+		第26回合同展公式サイト
+		<a href="http://26thgoudouten.web.fc2.com/">http://26thgoudouten.web.fc2.com/</a><br>
+		第25回合同展公式サイト
+		<a href="http://godo10.xxxxxxxx.jp/">http://godo10.xxxxxxxx.jp/</a><br><hr>
+		<h2>OB会</h2>
+		城北学園美術部OB会
+		<a href="http://blog.livedoor.jp/johokuart/">http://blog.livedoor.jp/johokuart/</a><br>
+		<div style="position:absolute;right:3px;bottom:15px;color:#ffffff;font-size:3em;"onclick="toLinks(1);listMode();delay=10;">BACK</div>
+	</div>
+
+	<canvas id="c1"></canvas>
+
+	<img src="PIC/logo.png"id="logo">
+
+	<div id="list">
+	<li class='aList'onMouseOver='arcSelect=0;'onMouseOut='arcSelect=-1;'onClick='listMode(1);toParticipants(1);toLinks(1);toAboutUs();delay=20;'>About us</li>
+	<li class='aList'onMouseOver='arcSelect=1;'onMouseOut='arcSelect=-1;'onClick='listMode(1);toAboutUs(1);toLinks(1);toParticipants();delay=20;'>Participants</li>
+	<a class='aList'onMouseOver='arcSelect=2;'onMouseOut='arcSelect=-1;'href='gallery.html'target="_blank">Gallery</a><br>
+	<li class='aList'onMouseOver='arcSelect=3;'onMouseOut='arcSelect=-1;'onClick='listMode(1);toAboutUs(1);toParticipants(1);toLinks(1);toAccess();delay=20;'>Access</li>
+	<li class='aList'onMouseOver='arcSelect=4;'onMouseOut='arcSelect=-1;'onClick='listMode(1);toAboutUs(1);toParticipants(1);toLinks();delay=20;'>Links</li>
+	<a class='aList'onMouseOver='arcSelect=5;'onMouseOut='arcSelect=-1;'href='BBS'>BBS</a><br>
+	<a class='aList'onMouseOver='arcSelect=6;'onMouseOut='arcSelect=-1;'href='edit.html'>Staff only</a>
+	</div>
+
+	<div id="login" onMouseOver="delay=1/0;" onMouseOut="delay=10;">
+	<div style="position:absolute;right:5px;top:5px;padding-left:8px;border-left:solid 1px #888888;">
+		ID<input type="text" name="id">
+		pass<input type="password" name="pass">
+		<input type="submit" value="LOGIN">
+		</div>
+	</form>
+	</div>
+<script type="text/javascript"src="main.js"></script>
+</body>
+</html>

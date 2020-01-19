@@ -1,0 +1,6 @@
+*.ipch
+*.vscode
+*.out
+*.dat
+*.pdf
+.DS_Store
