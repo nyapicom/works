@@ -435,41 +435,5 @@
 <img src="pic/slash.png"style="position:absolute;left:431px;"><div class="menu"id="menu4">各ページの解説</div>
 <img src="pic/slash.png"style="position:absolute;left:570px;"><div class="menu"id="menu5">アンケート</div>
 </div>
-<audio id="beep-one" preload="auto">
-    <source src="click.mp3"></source>
-    Your browser isn't invited for super fun audio time.
-</audio>
-<audio id="beep-two" preload="auto">
-    <source src="over.mp3"></source>
-    Your browser isn't invited for super fun audio time.
-</audio>
-<script>
-var beepOne = $("#beep-one")[0];
-var beepTwo = $("#beep-two")[0];
-jQuery(document).ready( function() {
-    $("#menu1").click(function(){
-        beepTwo.play();
-    });
-});
-$("#bar")
-    .mouseenter(function() {
-        beepOne.play();
-    });
-$("#menu1").mouseenter(function(){
-    beepTwo.play();
-});
-$("#menu2").mouseenter(function(){
-    beepTwo.play();
-});
-$("#menu3").mouseenter(function(){
-    beepTwo.play();
-});
-$("#menu4").mouseenter(function(){
-    beepTwo.play();
-});
-$("#menu5").mouseenter(function(){
-    beepTwo.play();
-});
-</script>
 </body>
 </html>

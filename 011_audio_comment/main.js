@@ -30,7 +30,7 @@ let Vec2 = function(x,y){
 }
 
 // UIの生成
-let text_bar = function(parent, val_name){
+let text_bar = function(val_name, parent){
 	console.log("テキストバー生成"+val_name)
 	this.val_name = val_name
 	this.val = [0,0]
@@ -46,7 +46,7 @@ let text_bar = function(parent, val_name){
 		this.dom.innerHTML = ""+this.val[0]
 	}
 }
-let slider = function(parent, val_name, init, min, max, step){
+let slider = function(val_name, parent, val, min, max, step){
 	console.log("slider生成"+val_name)
 	this.val_name = val_name
 	//sliderをまとめてwrapするdiv
@@ -59,7 +59,7 @@ let slider = function(parent, val_name, init, min, max, step){
 	this.dom0.appendChild(this.dom1)
 	this.dom1.innerHTML = this.val_name
 	// 変数値を表示するUI
-	this.dom2 = new text_bar(this.dom0, this.val_name)
+	this.dom2 = new text_bar(this.val_name, this.dom0)
 	// つまみのUI
 	this.dom3 = document.createElement('input')
 	this.dom0.appendChild(this.dom3)
@@ -67,7 +67,7 @@ let slider = function(parent, val_name, init, min, max, step){
 	this.dom3.setAttribute("min", min)
 	this.dom3.setAttribute("max", max)
 	this.dom3.setAttribute("step", step)
-	this.dom3.setAttribute("value", init)  // valueは最後に指定しないと初期値が指定できない
+	this.dom3.setAttribute("value", val)  // valueは最後に指定しないと初期値が指定できない
 	//
 	this.update = function(param){
 		param[this.val_name] = Number(this.dom3.value)  // つまみの値を代入
@@ -77,15 +77,16 @@ let slider = function(parent, val_name, init, min, max, step){
 		this.dom2.draw()
 	}
 }
-let slider_list = function(parent){
+let slider_list = function(val_names, parent){
 	// 自分自身
+	this.val_names = val_names
 	this.dom = document.createElement('div')
 	this.dom.setAttribute("class","slider_list")
 	parent.appendChild(this.dom)
 	// child
 	this.UI = []
-	this.add_slider = function(val_name, init, min, max, step){
-		this.UI.push( new slider(this.dom, val_name, init, min, max, step) )  // slider_list自身を親要素にする
+	for (let i = 0; i < this.val_names.length; i++) {
+		this.UI[i] = new slider(this.val_names[i], this.dom, 0.03, 0, 0.2, 0.003)  // slider_list自身を親要素にする
 	}
 	this.update = function(val){
 		for (let i = 0; i < this.UI.length; i++) {
@@ -115,7 +116,7 @@ let canvas = function(w,h,parent){
 // 魚群もどきの定義
 let boid = function(id,x,y,vx,vy){
 	this.id = id
-	this.mass = 5.0
+	this.mass = 3.0
 	this.pos = new Vec2(x,y)
 	this.v = new Vec2(vx,vy)
 	this.GetSeparation = function(target, param){  // 周囲から離れる
@@ -189,8 +190,8 @@ let master = function(agentNum, w, h, dt, parent){
 		w:w,
 		h:h,
 		t:0,
-		sim_coef:20,
-		dt:dt / 20
+		sim_coef:10,
+		dt:dt / 10
 	}
 	this.parent = parent
 	this.canvas = new canvas(w, h, parent)
@@ -224,13 +225,7 @@ let master = function(agentNum, w, h, dt, parent){
 		self.param.t += self.param.dt
 	}
 	this.init = function(agentNum){
-		this.UI[0] = new slider_list(parent)
-		this.UI[0].add_slider("separationCoef", this.param.separationCoef, 0, 1, 0.005)
-		this.UI[0].add_slider("alignmentCoef", this.param.alignmentCoef, 0, 0.5, 0.005)
-		this.UI[0].add_slider("cohesionCoef", this.param.cohesionCoef, 0, 0.5, 0.005)
-		this.UI[0].add_slider("mateRadius", this.param.mateRadius, 0, 300, 1)
-		this.UI[0].add_slider("separationRadius", this.param.separationRadius, 0, 300, 1)
-		this.UI[0].add_slider("maxVelocity", this.param.maxVelocity, 0, 10, 0.1)
+		this.UI[0] = new slider_list(["separationCoef","alignmentCoef","cohesionCoef"], parent)
 		for (let i = 0; i < agentNum; i++) {
 			this.agent[i] = new boid(i, Math.random()*this.param.w, Math.random()*this.param.h, Math.random()*1.4-0.7, Math.random()*1.4-0.7, 60)
 		}
