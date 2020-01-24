@@ -1,0 +1,52 @@
+/*
+
+汎用的なやつ
+
+*/
+
+body{
+	background-color: #e7e7e7;
+}
+#container{
+	position: relative;
+	width: 800px;
+}
+canvas{
+	border: 3px solid #000;
+}
+.slider_list{
+	width: 310px;
+	background-color: rgba(0,0,0,0.85);
+	color: #eee;
+	padding: 5px;
+}
+.slider{
+	font-size: 0.9em;
+	padding:5px;
+}
+.val_name{
+	width: 90px;
+	padding: 2px;
+	margin-right: 5px;
+	display: inline-block;
+}
+.text_bar{
+	width: 50px;
+	padding: 2px;
+	background-color: #fff;
+	/* border: 1px solid rgba(255,255,255,0.8); */
+	color: #333;
+	margin-right: 5px;
+	display: inline-block;
+}
+input[type="range"]{
+	-webkit-appearance: none;
+	background-color: #fff;
+	height: 4px;
+	border-radius: 6px;
+	display: inline-block;
+}
+#comment{
+	padding: 20px;
+	margin-top: 20px;
+}

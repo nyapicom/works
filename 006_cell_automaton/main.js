@@ -115,97 +115,75 @@ let canvas = function(w,h,parent){
 	}
 }
 
-// 魚群もどきの定義
-let boid = function(id,x,y,vx,vy){
-	this.id = id
-	this.mass = 5.0
+// cellの定義
+let cell = function(x,y,state){
 	this.pos = new Vec2(x,y)
-	this.v = new Vec2(vx,vy)
-	this.GetSeparation = function(target, param){  // 周囲から離れる
-		let a = new Vec2(0,0)
-		for (let i = 0; i < target.length; i++) {
-			if(i==this.id)continue
-			let d = target[i].pos.sub(this.pos)  // 相対位置
-			if(d.norm() > param.separationRadius)continue
-			let dn = d.norm()
-			a = a.add(d.mul(-1/dn))
-		}
-		return a
+	this.state = [state,state]
+}
+cell.prototype.getNextGeneration = function(target, param){  // １つ前の状態を見て計算しないといけない
+	let dx=[1,1,1,0,0,-1,-1,-1], dy=[1,0,-1,1,-1,1,0,-1], count=0
+	for (let i = 0; i < dx.length; i++) {
+		if(0>this.pos.x+dx[i] || this.pos.x+dx[i]>=param.w)continue
+		if(0>this.pos.y+dy[i] || this.pos.y+dy[i]>=param.h)continue
+		if(target[this.pos.y+dy[i]][this.pos.x+dx[i]].state[1]==1)count++
 	}
-	this.GetAlignment = function(target, param){  // 周囲と向きを揃える
-		let a = new Vec2(0,0)
-		for (let i = 0; i < target.length; i++) {
-			if(i==this.id)continue
-			let d = target[i].pos.sub(this.pos)  // 相対位置
-			if(d.norm() > param.mateRadius)continue
-			a = a.add(target[i].v)
-		}
-		return a
+	if(this.state[0]==0 && count==3){
+		this.state[0]=1
+		return
 	}
-	this.GetCohesion = function(target, param){  // 周囲の重心に集まる
-		let a = new Vec2(0,0)
-		for (let i = 0; i < target.length; i++) {
-			if(i==this.id)continue
-			let d = target[i].pos.sub(this.pos)  // 相対位置
-			if(d.norm() > param.mateRadius)continue
-			a = a.add(d.normal())
-		}
-		return a
+	if(this.state[0]==1 && (count<=1 || count>=4)){
+		this.state[0]=0
+		return
 	}
-	this.update = function(target, param){
-		let fs = [this.GetSeparation(target,param), this.GetAlignment(target,param), this.GetCohesion(target,param)]
-		let coef = [param.separationCoef, param.alignmentCoef, param.cohesionCoef]
-		let f = new Vec2(0,0)
-		for (let i = 0; i < fs.length; i++) {
-			f = f.add(fs[i].mul(coef[i]))
-		}
-		let a = f.mul(1/this.mass)  // 力を加速度に変換
-		this.v = this.v.add(a.mul(param.dt))
-		if(this.v.norm() > param.maxVelocity){  // 速度制限をつけた
-			this.v = this.v.normal()
-			this.v = this.v.mul(param.maxVelocity)
-		}
-		this.pos = this.pos.add(this.v.mul(param.dt))
-		if(this.pos.x > param.w)this.pos.x-=param.w
-		if(this.pos.x < 0)this.pos.x+=param.w
-		if(this.pos.y > param.h)this.pos.y-=param.h
-		if(this.pos.y < 0)this.pos.y+=param.h
+	return
+}
+cell.prototype.update = function(target, param){
+	this.getNextGeneration(target, param)
+}
+cell.prototype.update2 = function(){
+	this.state = [this.state[0],this.state[0]]
+}
+cell.prototype.draw = function(c, param){
+	if(this.state[0]==0){
+		c.fillStyle = "rgb(0,0,0)"
+	}else if(this.state[0]==1){
+		c.fillStyle = "rgb(255,255,255)"
 	}
-	this.draw = function(c){
-		c.fillStyle = "rgb(255,0,0)"
-		c.beginPath()
-		c.arc(this.pos.x, this.pos.y, 2, 0, Math.PI*2)
-		c.fill()
-	}
+	c.beginPath()
+	c.rect(this.pos.x*param.pixel_size, this.pos.y*param.pixel_size, param.pixel_size, param.pixel_size)
+	c.fill()
 }
 
 // 全ての親。UIも計算も全部ここで管理する。
-let master = function(agentNum, w, h, dt, parent){
+let master = function(w, h, pixel_size, dt, parent){
 	console.log("masterObject生成")
 	this.param = {  // agent以外で渡すものは全てここに入れる
-		separationCoef:0.03,
-		alignmentCoef:0.03,
-		cohesionCoef:0.03,
-		mateRadius:30,
-		separationRadius:60,
-		maxVelocity:2,
 		w:w,
 		h:h,
 		t:0,
+		pixel_size:pixel_size,
 		sim_coef:20,
 		dt:dt / 20
 	}
 	this.parent = parent
-	this.canvas = new canvas(w, h, parent)
+	this.canvas = new canvas(w*pixel_size, h*pixel_size, parent)
 	this.c = this.canvas.dom.getContext("2d")
-	this.agent = []
 	this.UI = []
+	this.agent = []
 	this.scene = {}
 	var self = this  // ここがミソ（ここでthisを保持しないと、setIntervalのスコープに入ったときに動かなくなる）
 	this.update = function(){
 		// 目標の情報を与え、行動処理はオブジェクトに丸投げ
 		for (let i = 0; i < this.agent.length; i++) {
-			this.agent[i].update(this.agent, this.param)
+			for (let j = 0; j < this.agent[i].length; j++) {
+				this.agent[i][j].update(this.agent, this.param)
+			}
+		}
+		// アルゴリズム的に、updateの後でもう一回更新しないといけない
+		for (let i = 0; i < this.agent.length; i++) {
+			for (let j = 0; j < this.agent[i].length; j++) {
+				this.agent[i][j].update2()
+			}
 		}
 		for (let i = 0; i < this.UI.length; i++) {
 			this.UI[i].update(this.param)
@@ -214,10 +192,12 @@ let master = function(agentNum, w, h, dt, parent){
 	this.draw = function(){
 		this.c.clearRect(0, 0, this.param.w, this.param.h)
 		for (let i = 0; i < this.agent.length; i++) {
-			this.agent[i].draw(this.c)
+			for (let j = 0; j < this.agent[i].length; j++) {
+				this.agent[i][j].draw(this.c, this.param)
+			}
 		}
 		for (let i = 0; i < this.UI.length; i++) {
-			this.UI[i].draw()
+			this.UI[i].draw(this.c)
 		}
 	}
 	this.loop = function(){
@@ -226,24 +206,25 @@ let master = function(agentNum, w, h, dt, parent){
 		self.draw()
 		self.param.t += self.param.dt
 	}
-	this.init = function(agentNum){
-		this.UI[0] = new slider_list(parent)
-		this.UI[0].add_slider("separationCoef", this.param.separationCoef, 0, 1, 0.005)
-		this.UI[0].add_slider("alignmentCoef", this.param.alignmentCoef, 0, 0.5, 0.005)
-		this.UI[0].add_slider("cohesionCoef", this.param.cohesionCoef, 0, 0.5, 0.005)
-		this.UI[0].add_slider("mateRadius", this.param.mateRadius, 0, 300, 1)
-		this.UI[0].add_slider("separationRadius", this.param.separationRadius, 0, 300, 1)
-		this.UI[0].add_slider("maxVelocity", this.param.maxVelocity, 0, 10, 0.1)
-		for (let i = 0; i < agentNum; i++) {
-			this.agent[i] = new boid(i, Math.random()*this.param.w, Math.random()*this.param.h, Math.random()*1.4-0.7, Math.random()*1.4-0.7, 60)
+	this.init = function(w, h){
+		for (let i = 0; i < h; i++) {
+			this.agent[i]=[]
+			for (let j = 0; j < w; j++) {
+				if(Math.random()<0.2){
+					this.agent[i][j] = new cell(j,i,1)
+				}else{
+					this.agent[i][j] = new cell(j,i,0)
+				}
+			}
 		}
 		this.scene = setInterval(this.loop, this.param.dt*this.param.sim_coef)
+		console.log("init end!")
 	}
-	this.init(agentNum)
+	this.init(w, h)
 }
 
 window.onload = function() {
 	console.log("loaded")
-	var gm = new master(250, 800, 480, 1000/60, document.getElementById("container"))
+	var gm = new master(100, 100, 5, 1000/30, document.getElementById("container"))
 	console.log(gm)
 }
