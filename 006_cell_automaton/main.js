@@ -3,33 +3,33 @@
 let Vec2 = function(x,y){
 	this.x = x
 	this.y = y
-	this.tiny_vec = function(){  // 小さいランダムベクトルを生成することで、要素同士の重なりを防ぐ
-		return new Vec2(Math.random()*0.01-0.005, Math.random()*0.01-0.005)
-	}
-	this.copy = function(){
-		return new Vec2(this.x, this.y)
-	}
-	this.add = function(v){
-		return new Vec2(this.x+v.x, this.y+v.y)
-	}
-	this.sub = function(v){
-		return new Vec2(this.x-v.x, this.y-v.y)
-	}
-	this.mul = function(a){
-		if(a==Infinity || a==-Infinity)return this.tiny_vec()  // こうすると自分の実装では都合がいい
-		return new Vec2(this.x*a, this.y*a)
-	}
-	this.prod = function(v){
-		return new Vec2(this.x*v.x, this.y*v.y)
-	}
-	this.norm = function(){
-		return Math.sqrt(Math.pow(this.x,2)+Math.pow(this.y,2))
-	}
-	this.normal = function(){
-		let d = this.norm(this)
-		if(d==0)return this.tiny_vec()
-		return new Vec2(this.x/d,this.y/d)
-	}
+}
+Vec2.prototype.tiny_vec = function(){  // 小さいランダムベクトルを生成することで、要素同士の重なりを防ぐ
+	return new Vec2(Math.random()*0.01-0.005, Math.random()*0.01-0.005)
+}
+Vec2.prototype.copy = function(){
+	return new Vec2(this.x, this.y)
+}
+Vec2.prototype.add = function(v){
+	return new Vec2(this.x+v.x, this.y+v.y)
+}
+Vec2.prototype.sub = function(v){
+	return new Vec2(this.x-v.x, this.y-v.y)
+}
+Vec2.prototype.mul = function(a){
+	if(a==Infinity || a==-Infinity)return this.tiny_vec()  // こうすると自分の実装では都合がいい
+	return new Vec2(this.x*a, this.y*a)
+}
+Vec2.prototype.prod = function(v){
+	return new Vec2(this.x*v.x, this.y*v.y)
+}
+Vec2.prototype.norm = function(){
+	return Math.sqrt(Math.pow(this.x,2)+Math.pow(this.y,2))
+}
+Vec2.prototype.normal = function(){
+	let d = this.norm(this)
+	if(d==0)return this.tiny_vec()
+	return new Vec2(this.x/d,this.y/d)
 }
 
 // UIの生成

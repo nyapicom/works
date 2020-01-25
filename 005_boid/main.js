@@ -3,34 +3,42 @@
 let Vec2 = function(x,y){
 	this.x = x
 	this.y = y
-	this.tiny_vec = function(){  // 小さいランダムベクトルを生成することで、要素同士の重なりを防ぐ
+}
+Vec2.prototype = {
+	tiny_vec : function(){  // 小さいランダムベクトルを生成することで、要素同士の重なりを防ぐ
 		return new Vec2(Math.random()*0.01-0.005, Math.random()*0.01-0.005)
-	}
-	this.copy = function(){
+	},
+	clone : function(){
 		return new Vec2(this.x, this.y)
-	}
-	this.add = function(v){
+	},
+	add : function(v){
 		return new Vec2(this.x+v.x, this.y+v.y)
-	}
-	this.sub = function(v){
+	},
+	sub : function(v){
 		return new Vec2(this.x-v.x, this.y-v.y)
-	}
-	this.mul = function(a){
+	},
+	mul : function(a){
 		if(a==Infinity || a==-Infinity)return this.tiny_vec()  // こうすると自分の実装では都合がいい
 		return new Vec2(this.x*a, this.y*a)
-	}
-	this.prod = function(v){
+	},
+	prod : function(v){
 		return new Vec2(this.x*v.x, this.y*v.y)
-	}
-	this.norm = function(){
+	},
+	norm : function(){
 		return Math.sqrt(Math.pow(this.x,2)+Math.pow(this.y,2))
-	}
-	this.normal = function(){
-		let d = this.norm(this)
-		if(d==0)return this.tiny_vec()
-		return new Vec2(this.x/d,this.y/d)
+	},
+	normal : function(){
+		return this.mul(1/this.norm())
+	},
+	scale : function(a){
+		return this.normal().mul(a);
+	},
+	truncate : function(a){
+		if(this.norm()>a)return this.scale(a)
+		return this
 	}
 }
+
 
 // UIの生成
 let text_bar = function(parent, val_name){
@@ -115,66 +123,73 @@ let canvas = function(w,h,parent){
 	}
 }
 
+/*
+====================================
+この上は共通ライブラリにしたい
+====================================
+*/
+
 // 魚群もどきの定義
 let boid = function(id,x,y,vx,vy){
 	this.id = id
-	this.mass = 5.0
-	this.pos = new Vec2(x,y)
-	this.v = new Vec2(vx,vy)
-	this.GetSeparation = function(target, param){  // 周囲から離れる
+	this.pos = [new Vec2(x,y), new Vec2(x,y)]
+	this.v = [new Vec2(vx,vy), new Vec2(vx,vy)]
+}
+boid.prototype = {
+	GetSeparation : function(target, param){  // 周囲から離れる
 		let a = new Vec2(0,0)
 		for (let i = 0; i < target.length; i++) {
 			if(i==this.id)continue
-			let d = target[i].pos.sub(this.pos)  // 相対位置
+			let d = target[i].pos[1].sub(this.pos[1])  // 相対位置
 			if(d.norm() > param.separationRadius)continue
 			let dn = d.norm()
 			a = a.add(d.mul(-1/dn))
 		}
 		return a
-	}
-	this.GetAlignment = function(target, param){  // 周囲と向きを揃える
+	},
+	GetAlignment : function(target, param){  // 周囲と向きを揃える
 		let a = new Vec2(0,0)
 		for (let i = 0; i < target.length; i++) {
 			if(i==this.id)continue
-			let d = target[i].pos.sub(this.pos)  // 相対位置
+			let d = target[i].pos[1].sub(this.pos[1])  // 相対位置
 			if(d.norm() > param.mateRadius)continue
-			a = a.add(target[i].v)
+			a = a.add(target[i].v[1])
 		}
 		return a
-	}
-	this.GetCohesion = function(target, param){  // 周囲の重心に集まる
+	},
+	GetCohesion : function(target, param){  // 周囲の重心に集まる
 		let a = new Vec2(0,0)
 		for (let i = 0; i < target.length; i++) {
 			if(i==this.id)continue
-			let d = target[i].pos.sub(this.pos)  // 相対位置
+			let d = target[i].pos[1].sub(this.pos[1])  // 相対位置
 			if(d.norm() > param.mateRadius)continue
-			a = a.add(d.normal())
+			a = a.add(d)
 		}
 		return a
-	}
-	this.update = function(target, param){
+	},
+	update : function(target, param){
 		let fs = [this.GetSeparation(target,param), this.GetAlignment(target,param), this.GetCohesion(target,param)]
 		let coef = [param.separationCoef, param.alignmentCoef, param.cohesionCoef]
 		let f = new Vec2(0,0)
 		for (let i = 0; i < fs.length; i++) {
-			f = f.add(fs[i].mul(coef[i]))
+			f = f.add(fs[i].scale(param.maxVelocity).sub(this.v[1]).truncate(coef[i]))
 		}
-		let a = f.mul(1/this.mass)  // 力を加速度に変換
-		this.v = this.v.add(a.mul(param.dt))
-		if(this.v.norm() > param.maxVelocity){  // 速度制限をつけた
-			this.v = this.v.normal()
-			this.v = this.v.mul(param.maxVelocity)
-		}
-		this.pos = this.pos.add(this.v.mul(param.dt))
-		if(this.pos.x > param.w)this.pos.x-=param.w
-		if(this.pos.x < 0)this.pos.x+=param.w
-		if(this.pos.y > param.h)this.pos.y-=param.h
-		if(this.pos.y < 0)this.pos.y+=param.h
-	}
-	this.draw = function(c){
+		let a = f.clone()  // 力を加速度に変換
+		this.v[0] = this.v[0].add(a.mul(param.dt)).truncate(param.maxVelocity)
+		this.pos[0] = this.pos[0].add(this.v[0].mul(param.dt))
+		if(this.pos[0].x > param.w)this.pos[0].x-=param.w
+		if(this.pos[0].x < 0)this.pos[0].x+=param.w
+		if(this.pos[0].y > param.h)this.pos[0].y-=param.h
+		if(this.pos[0].y < 0)this.pos[0].y+=param.h
+	},
+	update2 : function(){
+		this.v[1] = this.v[0]
+		this.pos[1] = this.pos[0]
+	},
+	draw : function(c){
 		c.fillStyle = "rgb(255,0,0)"
 		c.beginPath()
-		c.arc(this.pos.x, this.pos.y, 2, 0, Math.PI*2)
+		c.arc(this.pos[0].x, this.pos[0].y, 2, 0, Math.PI*2)
 		c.fill()
 	}
 }
@@ -186,8 +201,8 @@ let master = function(agentNum, w, h, dt, parent){
 		separationCoef:0.03,
 		alignmentCoef:0.03,
 		cohesionCoef:0.03,
-		mateRadius:30,
-		separationRadius:60,
+		mateRadius:60,
+		separationRadius:30,
 		maxVelocity:2,
 		w:w,
 		h:h,
@@ -202,16 +217,41 @@ let master = function(agentNum, w, h, dt, parent){
 	this.UI = []
 	this.scene = {}
 	var self = this  // ここがミソ（ここでthisを保持しないと、setIntervalのスコープに入ったときに動かなくなる）
-	this.update = function(){
+	this.loop = function(){
+		// selfはthisが変わりそうなところにだけ入れればOK
+		self.update()
+		self.draw()
+		self.param.t += self.param.dt
+	}
+	this.init(agentNum)
+}
+master.prototype = {
+	init : function(agentNum){
+		this.UI[0] = new slider_list(this.parent)
+		this.UI[0].add_slider("separationCoef", this.param.separationCoef, 0, 0.1, 0.001)
+		this.UI[0].add_slider("alignmentCoef", this.param.alignmentCoef, 0, 0.1, 0.001)
+		this.UI[0].add_slider("cohesionCoef", this.param.cohesionCoef, 0, 0.1, 0.001)
+		this.UI[0].add_slider("mateRadius", this.param.mateRadius, 0, 300, 1)
+		this.UI[0].add_slider("separationRadius", this.param.separationRadius, 0, 300, 1)
+		this.UI[0].add_slider("maxVelocity", this.param.maxVelocity, 0, 10, 0.1)
+		for (let i = 0; i < agentNum; i++) {
+			this.agent[i] = new boid(i, Math.random()*this.param.w, Math.random()*this.param.h, Math.random()*1.4-0.7, Math.random()*1.4-0.7, 60)
+		}
+		this.scene = setInterval(this.loop, this.param.dt*this.param.sim_coef)
+	},
+	update : function(){
 		// 目標の情報を与え、行動処理はオブジェクトに丸投げ
 		for (let i = 0; i < this.agent.length; i++) {
 			this.agent[i].update(this.agent, this.param)
 		}
+		for (let i = 0; i < this.agent.length; i++) {
+			this.agent[i].update2()
+		}
 		for (let i = 0; i < this.UI.length; i++) {
 			this.UI[i].update(this.param)
 		}
-	}
-	this.draw = function(){
+	},
+	draw : function(){
 		this.c.clearRect(0, 0, this.param.w, this.param.h)
 		for (let i = 0; i < this.agent.length; i++) {
 			this.agent[i].draw(this.c)
@@ -220,26 +260,6 @@ let master = function(agentNum, w, h, dt, parent){
 			this.UI[i].draw()
 		}
 	}
-	this.loop = function(){
-		// selfはthisが変わりそうなところにだけ入れればOK
-		self.update()
-		self.draw()
-		self.param.t += self.param.dt
-	}
-	this.init = function(agentNum){
-		this.UI[0] = new slider_list(parent)
-		this.UI[0].add_slider("separationCoef", this.param.separationCoef, 0, 1, 0.005)
-		this.UI[0].add_slider("alignmentCoef", this.param.alignmentCoef, 0, 0.5, 0.005)
-		this.UI[0].add_slider("cohesionCoef", this.param.cohesionCoef, 0, 0.5, 0.005)
-		this.UI[0].add_slider("mateRadius", this.param.mateRadius, 0, 300, 1)
-		this.UI[0].add_slider("separationRadius", this.param.separationRadius, 0, 300, 1)
-		this.UI[0].add_slider("maxVelocity", this.param.maxVelocity, 0, 10, 0.1)
-		for (let i = 0; i < agentNum; i++) {
-			this.agent[i] = new boid(i, Math.random()*this.param.w, Math.random()*this.param.h, Math.random()*1.4-0.7, Math.random()*1.4-0.7, 60)
-		}
-		this.scene = setInterval(this.loop, this.param.dt*this.param.sim_coef)
-	}
-	this.init(agentNum)
 }
 
 window.onload = function() {
