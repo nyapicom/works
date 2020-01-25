@@ -1,4 +1,0 @@
-digraph G {
-master -> cell -> Vec2;
-master -> canvas;
-}
