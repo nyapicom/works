@@ -1,4 +1,4 @@
-# cell automaton 2020
+# Cell Automaton 2020
 - 一時停止機能、ドローイング機能を付けたい
     - buttonの実装
     - クリックの認識
