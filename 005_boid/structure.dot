@@ -1,0 +1,6 @@
+digraph G {
+master -> boid -> Vec2;
+master -> canvas;
+master -> slider_list -> slider;
+slider_list -> text_bar;
+}
