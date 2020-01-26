@@ -216,19 +216,25 @@ som.prototype = {
 		return index
 	},
 	learn : function(index, data, t){
-		this.cell[index[0]][index[1]].mul(1-t).add(data.mul(t))
+		this.cell[index[0]][index[1]].mul(1.0-t).add(data.mul(t))
+	},
+	gauss : function(sigma,d2){
+		return Math.exp(-d2/(2*sigma*sigma))
 	},
 	update : function(data){
 		// データを学習する
 		let index = this.find_closest(data)
 		let y=index[0],x=index[1]
-		let dx = [1,1,1,0,0,-1,-1,-1],dy=[1,0,-1,1,-1,1,0,-1]
-		this.learn(index, data, 0.7/(1+this.t*0.000001)+0.3)
-		for (let i = 0; i < dx.length; i++) {
-			if(0>x+dx[i] || x+dx[i]>=this.w)continue
-			if(0>y+dy[i] || y+dy[i]>=this.h)continue
-			this.learn([y+dy[i],x+dx[i]], data.clone(), 0.5/(1+this.t*0.000001)+0.1)
+		let sigma = 3.0/(1+this.t*0.000001)
+		let r = Math.ceil(sigma)
+		for (let i = -2*r; i <= 2*r; i++) {
+			for (let j = -2*r; j <= 2*r; j++) {
+				if(0>x+j || x+j>=this.w)continue
+				if(0>y+i || y+i>=this.h)continue
+				this.learn([y+i,x+j], data.clone(), this.gauss(sigma, i*i+j*j))
+			}
 		}
+		if(Math.random()<0.00001)console.log(r)
 		this.t++
 	},
 	draw : function(c, param){
@@ -262,8 +268,8 @@ let master = function(h, w, dt, parent){
 	var self = this  // ここがミソ（ここでthisを保持しないと、setIntervalのスコープに入ったときに動かなくなる）
 	this.loop = function(){
 		// selfはthisが変わりそうなところにだけ入れればOK
-		self.update()
-		if(self.param.t%100==0)self.draw()
+		for(let i=0;i<1000;i++)self.update()
+		self.draw()
 		self.param.t++
 	}
 	this.init()
@@ -290,6 +296,6 @@ master.prototype = {
 
 window.onload = function() {
 	console.log("loaded")
-	var gm = new master(40, 40, 1000/1000, document.getElementById("container"))
+	var gm = new master(40, 40, 1000/30, document.getElementById("container"))
 	console.log(gm)
 }
