@@ -25,7 +25,7 @@ body{
 	margin-left:-320px;
 	margin-top: 20px;
 	background-color:#ffffff;
-	background-image: url("title.png");
+	background-image: url("img/title.png");
 }
 </style>
 <body onload="init()">
@@ -41,11 +41,11 @@ var canvas1 = document.getElementById("canvas1");
 var ctx = canvas1.getContext('2d');
 
 var title = new Image();
-title.src = "title.png?" + new Date().getTime();
+title.src = "img/title.png?" + new Date().getTime();
 var startButton = new Image();
-startButton.src = "Start.png?" + new Date().getTime();
+startButton.src = "img/Start.png?" + new Date().getTime();
 var title2 = new Image();
-title2.src = "test.png?" + new Date().getTime();
+title2.src = "img/test.png?" + new Date().getTime();
 
 function init(){
 	setInterval(function(){
